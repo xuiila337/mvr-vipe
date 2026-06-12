@@ -138,8 +138,8 @@ def run_ui(engine: Engine) -> None:
             state["page_index"] += 1
             redraw_pdf()
 
-    SoftButton(mid, "◀ Prev", prev_page, width=80, height=32, radius=8).grid(row=0, column=2, padx=(14, 6))
-    SoftButton(mid, "Next ▶", next_page, width=80, height=32, radius=8).grid(row=0, column=3, padx=6)
+    SoftButton(mid, "◀ Prev", prev_page, width=8).grid(row=0, column=2, padx=(14, 6))
+    SoftButton(mid, "Next ▶", next_page, width=8).grid(row=0, column=3, padx=6)
 
     tk.Label(mid, text="Zoom", bg=CARD_BG, fg=MUTED, font=("Segoe UI", 10)).grid(row=0, column=4, sticky="w", padx=(16, 6))
 
@@ -172,14 +172,14 @@ def run_ui(engine: Engine) -> None:
         state["debug_panel_visible"] = not bool(state["debug_panel_visible"])
         apply_debug_panel_visibility()
 
-    btn_toggle_debug_panel = SoftButton(mid, "Hide Debug", toggle_debug_panel, width=110, height=32, radius=8)
+    btn_toggle_debug_panel = SoftButton(mid, "Hide Debug", toggle_debug_panel, width=10)
     btn_toggle_debug_panel.grid(row=0, column=7, padx=(16, 0), sticky="e")
 
     def check_updates() -> None:
         from core.update_checker import check_for_updates_async
         check_for_updates_async(root, silent=False)
 
-    btn_check_updates = SoftButton(mid, "Check Updates", check_updates, width=120, height=32, radius=8)
+    btn_check_updates = SoftButton(mid, "Check Updates", check_updates, width=13)
     btn_check_updates.grid(row=0, column=8, padx=(12, 0), sticky="e")
 
     mid.grid_columnconfigure(9, weight=1)
@@ -351,9 +351,9 @@ def run_ui(engine: Engine) -> None:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save bundle:\n{e}")
 
-    SoftButton(actions, "Save actual .txt", save_actual_txt, width=140, height=38, radius=12).pack(side="left", padx=8)
-    SoftButton(actions, "Copy actual", copy_actual_clipboard, width=140, height=38, radius=12).pack(side="left", padx=8)
-    SoftButton(actions, "Save debug bundle (ZIP)", save_bundle_zip, kind="primary", width=220, height=38, radius=12).pack(side="right", padx=8)
+    SoftButton(actions, "Save actual .txt", save_actual_txt).pack(side="left", padx=8)
+    SoftButton(actions, "Copy actual", copy_actual_clipboard).pack(side="left", padx=8)
+    SoftButton(actions, "Save debug bundle (ZIP)", save_bundle_zip, kind="primary").pack(side="right", padx=8)
 
     # ------------------------
     # PDF rendering + highlights
