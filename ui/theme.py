@@ -5,23 +5,23 @@ from typing import Callable, Optional
 
 
 # =========================
-# Theme
+# Theme (Light Mode)
 # =========================
-BG_TOP = "#1A1A1E"       # background gradient top (dark titanium)
-BG_BOTTOM = "#0D0D0F"    # background gradient bottom (pure black)
-APP_BG = "#131316"       # container bg (mid)
-CARD_BG = "#1A1A1F"      # card bg
-CARD_BORDER = "#2C2C35"  # subtle border
-TEXT = "#F1F5F9"         # crisp white text
-MUTED = "#94A3B8"        # muted grey
-ACCENT = "#0A66FF"       # macOS Blue
-ACCENT_DARK = "#0052D6"
-BTN_BG = "#26262F"       # dark button bg
-BTN_BG_HOVER = "#31313C" # hover button bg
+BG_TOP = "#F8FAFC"       # Светлый верхний градиент (Slate 50)
+BG_BOTTOM = "#E2E8F0"    # Светлый нижний градиент (Slate 200)
+APP_BG = "#F1F5F9"       # Фоновый цвет контейнера
+CARD_BG = "#FFFFFF"      # Чисто белая карточка
+CARD_BORDER = "#CBD5E1"  # Мягкая серая граница для карточки
+TEXT = "#0F172A"         # Темно-синий/черный текст для отличной читаемости (Slate 900)
+MUTED = "#64748B"        # Приглушенный серый текст (Slate 500)
+ACCENT = "#0066CC"       # macOS Light Blue (Яркий синий)
+ACCENT_DARK = "#0052A3"  # Темно-синий для эффекта наведения (hover primary)
+BTN_BG = "#E2E8F0"       # Светло-серый фон для обычной кнопки
+BTN_BG_HOVER = "#CBD5E1" # Серый чуть темнее при наведении на обычную кнопку
 
-SW_ON = "#34C759"        # Apple Green for toggle switch ON
-SW_OFF = "#32323A"       # dark toggle switch OFF
-SW_KNOB = "#FFFFFF"
+SW_ON = "#34C759"        # Яркий зеленый Apple для Toggle ON
+SW_OFF = "#E9E9EB"       # Светло-серый Apple для Toggle OFF
+SW_KNOB = "#FFFFFF"      # Белый бегунок переключателя
 
 
 # =========================
@@ -46,7 +46,6 @@ def _blend(c1: str, c2: str, t: float) -> str:
 
 
 def _rounded_rect(canvas: tk.Canvas, x1, y1, x2, y2, r=16, **kwargs):
-    # Smooth polygon trick for rounded rect
     points = [
         x1 + r, y1,
         x2 - r, y1,
@@ -85,8 +84,7 @@ class GradientBackground(tk.Canvas):
         w = max(1, self.winfo_width())
         h = max(1, self.winfo_height())
 
-        # Draw stripes (fast enough for UI)
-        steps = min(220, h)  # fewer steps -> faster
+        steps = min(220, h)
         for i in range(steps):
             t = i / max(1, steps - 1)
             col = _blend(self.c1, self.c2, t)
@@ -96,7 +94,7 @@ class GradientBackground(tk.Canvas):
 
 
 class Card(tk.Canvas):
-    """Rounded card with pseudo shadow. Put widgets into card.body frame."""
+    """Rounded card with soft shadow adapted for light mode."""
     def __init__(self, master: tk.Misc, radius=18, pad=14):
         super().__init__(master, highlightthickness=0, bd=0, bg=APP_BG)
         self.radius = radius
@@ -116,19 +114,19 @@ class Card(tk.Canvas):
         h = max(1, self.winfo_height())
         self.delete("card")
 
-        # pseudo shadow (darker for dark mode)
-        shadow_off = 5
+        # Мягкая полупрозрачная тень для светлого режима
+        shadow_off = 4
         _rounded_rect(
             self,
             8 + shadow_off, 8 + shadow_off,
             w - 8 + shadow_off, h - 8 + shadow_off,
             r=self.radius,
-            fill="#08080B",
+            fill="#CBD5E1",  # Светлая серая тень вместо черной
             outline="",
             tags="card"
         )
 
-        # main card
+        # Основное тело карточки
         _rounded_rect(
             self,
             8, 8, w - 8, h - 8,
@@ -139,7 +137,6 @@ class Card(tk.Canvas):
             tags="card"
         )
 
-        # inner body resize
         inner_w = max(10, w - 2 * (8 + self.pad))
         inner_h = max(10, h - 2 * (8 + self.pad))
         self.coords(self._win_id, 8 + self.pad, 8 + self.pad)
@@ -149,7 +146,6 @@ class Card(tk.Canvas):
 class SoftButton(tk.Canvas):
     """Canvas-based rounded button supporting modern themes and animations."""
     def __init__(self, master, text: str, command: Callable[[], None], kind: str = "secondary", width: int = 140, height: int = 38, radius: int = 12):
-        # Инициализируем Canvas. Чтобы не было швов, bg берется от родителя
         super().__init__(master, width=width, height=height, highlightthickness=0, bd=0, bg=master["bg"])
         self.command = command
         self.width = width
@@ -157,7 +153,6 @@ class SoftButton(tk.Canvas):
         self.radius = radius
         self.text = text
 
-        # Конфигурация цветов
         if kind == "primary":
             self.bg_color = ACCENT
             self.hover_color = ACCENT_DARK
@@ -169,7 +164,6 @@ class SoftButton(tk.Canvas):
 
         self.current_bg = self.bg_color
 
-        # События мыши
         self.bind("<Enter>", self._on_enter)
         self.bind("<Leave>", self._on_leave)
         self.bind("<Button-1>", self._on_click)
@@ -180,7 +174,6 @@ class SoftButton(tk.Canvas):
     def redraw(self):
         self.delete("all")
         
-        # Отрисовка скругленного фона
         _rounded_rect(
             self, 
             0, 0, self.width, self.height, 
@@ -189,7 +182,6 @@ class SoftButton(tk.Canvas):
             outline=""
         )
         
-        # Текст по центру холста
         self.create_text(
             self.width // 2, self.height // 2,
             text=self.text,
@@ -238,25 +230,19 @@ class ToggleSwitch(tk.Canvas):
         on = bool(self.var.get())
         track = SW_ON if on else SW_OFF
 
-        # track
-        _rounded_rect(self, 1, 1, self.w - 1, self.h - 1, r=self.r, fill=track, outline=track)
+        # Отрегулирована граница для выключенного состояния, чтобы переключатель не терялся на белом фоне
+        outline_color = track if on else CARD_BORDER
+        _rounded_rect(self, 1, 1, self.w - 1, self.h - 1, r=self.r, fill=track, outline=outline_color)
 
-        # knob
         margin = 3
         knob_d = self.h - 2 * margin
         x1 = (self.w - margin - knob_d) if on else margin
         y1 = margin
-        self.create_oval(x1, y1, x1 + knob_d, y1 + knob_d, fill=SW_KNOB, outline="#2C2C35")
+        # Тень под бегунком переключателя
+        self.create_oval(x1, y1, x1 + knob_d, y1 + knob_d, fill=SW_KNOB, outline="#CBD5E1")
 
 
 class ModernSlider(tk.Canvas):
-    """
-    Canvas-based slider: looks more modern than tk.Scale.
-
-    - value range: [from_, to]
-    - variable: tk.DoubleVar
-    - resolution: step (e.g. 0.05)
-    """
     def __init__(
         self,
         master: tk.Misc,
@@ -278,8 +264,8 @@ class ModernSlider(tk.Canvas):
         self.command = command
 
         self._pad = 10
-        self._track_h = 10
-        self._knob_r = 10
+        self._track_h = 8
+        self._knob_r = 9
 
         self.bind("<Button-1>", self._on_click)
         self.bind("<B1-Motion>", self._on_drag)
@@ -330,16 +316,15 @@ class ModernSlider(tk.Canvas):
     def redraw(self) -> None:
         self.delete("all")
 
-        # track
         x0 = self._pad
         x1 = self.w - self._pad
         cy = self.h // 2
         th = self._track_h
         r = th // 2
 
-        _rounded_rect(self, x0, cy - th/2, x1, cy + th/2, r=r, fill="#2A2A33", outline="#2A2A33")
+        # Светлая дорожка слайдера
+        _rounded_rect(self, x0, cy - th/2, x1, cy + th/2, r=r, fill="#E2E8F0", outline="#E2E8F0")
 
-        # filled track
         try:
             v = float(self.var.get())
         except (ValueError, tk.TclError):
@@ -347,12 +332,13 @@ class ModernSlider(tk.Canvas):
         v = self._clamp(v)
         vx = self._x_from_value(v)
 
+        # Заполненная дорожка слайдера акцентным синим цветом
         _rounded_rect(self, x0, cy - th/2, vx, cy + th/2, r=r, fill=ACCENT, outline=ACCENT)
 
-        # knob
         kr = self._knob_r
-        self.create_oval(vx-kr-1, cy-kr+1, vx+kr-1, cy+kr+1, fill="#08080B", outline="")  # shadow
-        self.create_oval(vx-kr, cy-kr, vx+kr, cy+kr, fill="#FFFFFF", outline="#31313C")
+        # Тень и сам круглый бегунок
+        self.create_oval(vx-kr-1, cy-kr+1, vx+kr-1, cy+kr+1, fill="#CBD5E1", outline="")
+        self.create_oval(vx-kr, cy-kr, vx+kr, cy+kr, fill="#FFFFFF", outline="#94A3B8")
 
 
 def soft_text(parent: tk.Misc, height=10, readonly: bool = False) -> tk.Text:
@@ -361,12 +347,12 @@ def soft_text(parent: tk.Misc, height=10, readonly: bool = False) -> tk.Text:
         wrap="word",
         height=height,
         font=("Consolas", 10),
-        bg="#111115",            # dark input fields
+        bg="#F8FAFC",            # Светлое текстовое поле
         fg=TEXT,
         insertbackground=TEXT,
         bd=0,
         highlightthickness=1,
-        highlightbackground="#2C2C35",
+        highlightbackground=CARD_BORDER,
         highlightcolor=ACCENT,
         padx=10,
         pady=8
@@ -377,29 +363,46 @@ def soft_text(parent: tk.Misc, height=10, readonly: bool = False) -> tk.Text:
 
 
 # =========================
-# Пример запуска приложения
+# Демонстрационное окно
 # =========================
 if __name__ == "__main__":
     root = tk.Tk()
-    root.title("Modern UI Buttons")
-    root.geometry("400x300")
-    root.configure(bg=APP_BG)
+    root.title("Modern UI Light Mode")
+    root.geometry("500x450")
+    
+    # Создаем градиентный фон приложения
+    bg_gradient = GradientBackground(root, BG_TOP, BG_BOTTOM)
+    bg_gradient.pack(fill="both", expand=True)
 
-    def on_click_primary():
-        print("Нажата главная кнопка!")
+    # Создаем белую карточку по центру
+    card = Card(bg_gradient, radius=20, pad=16)
+    card.place(relx=0.5, rely=0.5, width=360, height=340, anchor="center")
 
-    def on_click_secondary():
-        print("Нажата второстепенная кнопка!")
+    # Контент внутри карточки
+    body = card.body
 
-    # Фрейм-контейнер для демонстрации кнопок
-    frame = tk.Frame(root, bg=APP_BG)
-    frame.pack(expand=True)
+    # Заголовок
+    lbl = tk.Label(body, text="Light Theme Active", font=("Segoe UI", 14, "bold"), bg=CARD_BG, fg=TEXT)
+    lbl.pack(pady=(10, 5))
+    
+    lbl_sub = tk.Label(body, text="Clean & crisp user interface", font=("Segoe UI", 10), bg=CARD_BG, fg=MUTED)
+    lbl_sub.pack(pady=(0, 15))
 
-    # Примеры скругленных кнопок
-    btn1 = SoftButton(frame, text="Primary Action", command=on_click_primary, kind="primary", width=160, height=40, radius=14)
-    btn1.pack(pady=10)
+    # Кнопки
+    btn_prim = SoftButton(body, text="Primary Action", command=lambda: print("Primary Clicked"), kind="primary", width=160, height=38, radius=12)
+    btn_prim.pack(pady=8)
 
-    btn2 = SoftButton(frame, text="Secondary", command=on_click_secondary, kind="secondary", width=140, height=38, radius=10)
-    btn2.pack(pady=10)
+    btn_sec = SoftButton(body, text="Secondary", command=lambda: print("Secondary Clicked"), kind="secondary", width=160, height=38, radius=12)
+    btn_sec.pack(pady=8)
+
+    # Переключатель
+    sw_var = tk.BooleanVar(value=True)
+    switch = ToggleSwitch(body, variable=sw_var)
+    switch.pack(pady=10)
+
+    # Слайдер
+    sld_var = tk.DoubleVar(value=0.5)
+    slider = ModernSlider(body, variable=sld_var, from_=0.0, to=1.0)
+    slider.pack(pady=10)
 
     root.mainloop()
