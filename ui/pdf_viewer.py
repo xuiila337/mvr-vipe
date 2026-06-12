@@ -35,7 +35,6 @@ def render_pdf_page_to_photo(pdf_path: str, page_index: int, zoom: float) -> Tup
         page = doc.load_page(page_index)
         mat = fitz.Matrix(zoom, zoom)  # type: ignore[union-attr]
         pix = page.get_pixmap(matrix=mat, alpha=False)
-        pix.clear_with(255)
         img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
         photo = ImageTk.PhotoImage(img)
         return photo, float(pix.width), float(pix.height)
