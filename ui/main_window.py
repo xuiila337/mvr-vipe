@@ -17,6 +17,7 @@ from ui.theme import (
     BG_BOTTOM,
     BG_TOP,
     CARD_BG,
+    CARD_BORDER,
     MUTED,
     TEXT,
     Card,
@@ -174,7 +175,14 @@ def run_ui(engine: Engine) -> None:
     btn_toggle_debug_panel = SoftButton(mid, "Hide Debug", toggle_debug_panel, width=10)
     btn_toggle_debug_panel.grid(row=0, column=7, padx=(16, 0), sticky="e")
 
-    mid.grid_columnconfigure(8, weight=1)
+    def check_updates() -> None:
+        from core.update_checker import check_for_updates_async
+        check_for_updates_async(root, silent=False)
+
+    btn_check_updates = SoftButton(mid, "Check Updates", check_updates, width=13)
+    btn_check_updates.grid(row=0, column=8, padx=(12, 0), sticky="e")
+
+    mid.grid_columnconfigure(9, weight=1)
 
     # Right: toggles (clean alignment, no clipping)
     right = tk.Frame(tb, bg=CARD_BG)
@@ -236,7 +244,7 @@ def run_ui(engine: Engine) -> None:
     xscroll = tk.Scrollbar(canvas_frame, orient="horizontal")
     xscroll.grid(row=1, column=0, sticky="ew")
 
-    canvas = tk.Canvas(canvas_frame, bg="#FFFFFF", highlightthickness=1, highlightbackground="#D6DEEE",
+    canvas = tk.Canvas(canvas_frame, bg="#111115", highlightthickness=1, highlightbackground=CARD_BORDER,
                        yscrollcommand=yscroll.set, xscrollcommand=xscroll.set)
     canvas.grid(row=0, column=0, sticky="nsew")
 
@@ -490,5 +498,12 @@ def run_ui(engine: Engine) -> None:
 
     # initial debug panel visibility
     apply_debug_panel_visibility()
+
+    # Check for updates asynchronously in silent mode on startup
+    try:
+        from core.update_checker import check_for_updates_async
+        check_for_updates_async(root, silent=True)
+    except Exception as e:
+        print(f"[UpdateCheck] Startup check failed: {e}")
 
     root.mainloop()

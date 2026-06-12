@@ -7,20 +7,20 @@ from typing import Callable, Optional
 # =========================
 # Theme
 # =========================
-BG_TOP = "#DDE9FF"       # background gradient top
-BG_BOTTOM = "#F2DDFF"    # background gradient bottom
-APP_BG = "#EEF3FB"       # container bg (mid)
-CARD_BG = "#F8FAFF"      # card bg
-CARD_BORDER = "#D7DFEE"  # subtle border
-TEXT = "#1C2333"
-MUTED = "#6B7487"
-ACCENT = "#6C63FF"       # purple/indigo
-ACCENT_DARK = "#5A52F0"
-BTN_BG = "#FFFFFF"
-BTN_BG_HOVER = "#F1F4FA"
+BG_TOP = "#1A1A1E"       # background gradient top (dark titanium)
+BG_BOTTOM = "#0D0D0F"    # background gradient bottom (pure black)
+APP_BG = "#131316"       # container bg (mid)
+CARD_BG = "#1A1A1F"      # card bg
+CARD_BORDER = "#2C2C35"  # subtle border
+TEXT = "#F1F5F9"         # crisp white text
+MUTED = "#94A3B8"        # muted grey
+ACCENT = "#0A66FF"       # macOS Blue
+ACCENT_DARK = "#0052D6"
+BTN_BG = "#26262F"       # dark button bg
+BTN_BG_HOVER = "#31313C" # hover button bg
 
-SW_ON = "#0A66FF"
-SW_OFF = "#CBD5E1"
+SW_ON = "#34C759"        # Apple Green for toggle switch ON
+SW_OFF = "#32323A"       # dark toggle switch OFF
 SW_KNOB = "#FFFFFF"
 
 
@@ -116,14 +116,14 @@ class Card(tk.Canvas):
         h = max(1, self.winfo_height())
         self.delete("card")
 
-        # pseudo shadow
-        shadow_off = 6
+        # pseudo shadow (darker for dark mode)
+        shadow_off = 5
         _rounded_rect(
             self,
             8 + shadow_off, 8 + shadow_off,
             w - 8 + shadow_off, h - 8 + shadow_off,
             r=self.radius,
-            fill="#C9D3E6",
+            fill="#08080B",
             outline="",
             tags="card"
         )
@@ -200,7 +200,7 @@ class ToggleSwitch(tk.Canvas):
         knob_d = self.h - 2 * margin
         x1 = (self.w - margin - knob_d) if on else margin
         y1 = margin
-        self.create_oval(x1, y1, x1 + knob_d, y1 + knob_d, fill=SW_KNOB, outline="#E6EAF2")
+        self.create_oval(x1, y1, x1 + knob_d, y1 + knob_d, fill=SW_KNOB, outline="#2C2C35")
 
 
 class ModernSlider(tk.Canvas):
@@ -291,7 +291,7 @@ class ModernSlider(tk.Canvas):
         th = self._track_h
         r = th // 2
 
-        _rounded_rect(self, x0, cy - th/2, x1, cy + th/2, r=r, fill="#E7ECF6", outline="#E7ECF6")
+        _rounded_rect(self, x0, cy - th/2, x1, cy + th/2, r=r, fill="#2A2A33", outline="#2A2A33")
 
         # filled track
         try:
@@ -303,10 +303,10 @@ class ModernSlider(tk.Canvas):
 
         _rounded_rect(self, x0, cy - th/2, vx, cy + th/2, r=r, fill=ACCENT, outline=ACCENT)
 
-        # knob (slightly shadowed)
+        # knob
         kr = self._knob_r
-        self.create_oval(vx-kr-1, cy-kr+1, vx+kr-1, cy+kr+1, fill="#C9D3E6", outline="")  # shadow
-        self.create_oval(vx-kr, cy-kr, vx+kr, cy+kr, fill="#FFFFFF", outline="#D6DEEE")
+        self.create_oval(vx-kr-1, cy-kr+1, vx+kr-1, cy+kr+1, fill="#08080B", outline="")  # shadow
+        self.create_oval(vx-kr, cy-kr, vx+kr, cy+kr, fill="#FFFFFF", outline="#31313C")
 
 
 def soft_text(parent: tk.Misc, height=10, readonly: bool = False) -> tk.Text:
@@ -315,12 +315,12 @@ def soft_text(parent: tk.Misc, height=10, readonly: bool = False) -> tk.Text:
         wrap="word",
         height=height,
         font=("Consolas", 10),
-        bg="#FFFFFF",
+        bg="#111115",            # dark input fields
         fg=TEXT,
         insertbackground=TEXT,
         bd=0,
         highlightthickness=1,
-        highlightbackground="#D6DEEE",
+        highlightbackground="#2C2C35",
         highlightcolor=ACCENT,
         padx=10,
         pady=8
