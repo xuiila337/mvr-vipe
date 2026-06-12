@@ -146,31 +146,77 @@ class Card(tk.Canvas):
         self.itemconfigure(self._win_id, width=inner_w, height=inner_h)
 
 
-class SoftButton(tk.Button):
-    def __init__(self, master, text, command, kind="secondary", width=None):
-        font = ("Segoe UI", 10, "bold")
+class SoftButton(tk.Canvas):
+    """Canvas-based rounded button supporting modern themes and animations."""
+    def __init__(self, master, text: str, command: Callable[[], None], kind: str = "secondary", width: int = 140, height: int = 38, radius: int = 12):
+        # Инициализируем Canvas. Чтобы не было швов, bg берется от родителя
+        super().__init__(master, width=width, height=height, highlightthickness=0, bd=0, bg=master["bg"])
+        self.command = command
+        self.width = width
+        self.height = height
+        self.radius = radius
+        self.text = text
+
+        # Конфигурация цветов
         if kind == "primary":
-            super().__init__(
-                master, text=text, command=command,
-                bg=ACCENT, fg="white",
-                activebackground=ACCENT_DARK,
-                activeforeground="white",
-                bd=0, relief="flat",
-                font=font, padx=14, pady=10,
-                cursor="hand2"
-            )
+            self.bg_color = ACCENT
+            self.hover_color = ACCENT_DARK
+            self.fg_color = "white"
         else:
-            super().__init__(
-                master, text=text, command=command,
-                bg=BTN_BG, fg=TEXT,
-                activebackground=BTN_BG_HOVER,
-                activeforeground=TEXT,
-                bd=0, relief="flat",
-                font=font, padx=14, pady=10,
-                cursor="hand2"
-            )
-        if width is not None:
-            self.configure(width=width)
+            self.bg_color = BTN_BG
+            self.hover_color = BTN_BG_HOVER
+            self.fg_color = TEXT
+
+        self.current_bg = self.bg_color
+
+        # События мыши
+        self.bind("<Enter>", self._on_enter)
+        self.bind("<Leave>", self._on_leave)
+        self.bind("<Button-1>", self._on_click)
+        
+        self.configure(cursor="hand2")
+        self.redraw()
+
+    def redraw(self):
+        self.delete("all")
+        
+        # Отрисовка скругленного фона
+        _rounded_rect(
+            self, 
+            0, 0, self.width, self.height, 
+            r=self.radius, 
+            fill=self.current_bg, 
+            outline=""
+        )
+        
+        # Текст по центру холста
+        self.create_text(
+            self.width // 2, self.height // 2,
+            text=self.text,
+            fill=self.fg_color,
+            font=("Segoe UI", 10, "bold"),
+            justify="center"
+        )
+
+    def _on_enter(self, _evt=None):
+        self.current_bg = self.hover_color
+        self.redraw()
+
+    def _on_leave(self, _evt=None):
+        self.current_bg = self.bg_color
+        self.redraw()
+
+    def _on_click(self, _evt=None):
+        if self.command:
+            self.command()
+
+    def configure(self, **kwargs):
+        if "text" in kwargs:
+            self.text = kwargs.pop("text")
+            self.redraw()
+        super().configure(**kwargs)
+
+    config = configure
 
 
 class ToggleSwitch(tk.Canvas):
@@ -328,3 +374,32 @@ def soft_text(parent: tk.Misc, height=10, readonly: bool = False) -> tk.Text:
     if readonly:
         t.configure(state="disabled")
     return t
+
+
+# =========================
+# Пример запуска приложения
+# =========================
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Modern UI Buttons")
+    root.geometry("400x300")
+    root.configure(bg=APP_BG)
+
+    def on_click_primary():
+        print("Нажата главная кнопка!")
+
+    def on_click_secondary():
+        print("Нажата второстепенная кнопка!")
+
+    # Фрейм-контейнер для демонстрации кнопок
+    frame = tk.Frame(root, bg=APP_BG)
+    frame.pack(expand=True)
+
+    # Примеры скругленных кнопок
+    btn1 = SoftButton(frame, text="Primary Action", command=on_click_primary, kind="primary", width=160, height=40, radius=14)
+    btn1.pack(pady=10)
+
+    btn2 = SoftButton(frame, text="Secondary", command=on_click_secondary, kind="secondary", width=140, height=38, radius=10)
+    btn2.pack(pady=10)
+
+    root.mainloop()
