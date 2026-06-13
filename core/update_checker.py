@@ -7,6 +7,7 @@ import sys
 import shutil
 import subprocess
 import tempfile
+import urllib.error
 import urllib.request
 from typing import Optional, Dict, Any
 
@@ -47,6 +48,16 @@ def get_latest_release_info() -> Optional[Dict[str, Any]]:
                 "download_url": download_url,
                 "release_notes": data.get("body", "")
             }
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            print(f"[UpdateChecker] No releases found in repository (HTTP 404).")
+            return {
+                "version": CURRENT_VERSION,
+                "download_url": None,
+                "release_notes": "Релизы на GitHub еще не опубликованы."
+            }
+        print(f"[UpdateChecker] Failed to check for updates (HTTP {e.code}): {e}")
+        return None
     except Exception as e:
         print(f"[UpdateChecker] Failed to check for updates: {e}")
         return None
