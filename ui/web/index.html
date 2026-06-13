@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVR / PSP Check</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Topbar Card -->
+        <div id="topbar" class="card">
+            <button id="btn-choose-pdf" class="btn btn-primary">Choose PDF</button>
+            
+            <div class="zoom-section">
+                <span class="zoom-label">Zoom:</span>
+                <span id="zoom-value" class="zoom-value">1.00x</span>
+                <input type="range" id="zoom-slider" class="styled-range" min="0.5" max="3.0" step="0.1" value="1.0">
+            </div>
+            
+            <div class="topbar-right">
+                <div class="toggles-section">
+                    <div class="toggle-row">
+                        <span class="toggle-label">Highlights</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle-highlights" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <span class="toggle-label">Debug mode</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle-debug">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <button id="btn-check-update" class="btn btn-primary">Check update</button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="main-content">
+            <!-- Left Panel: Actual and Expected Outputs -->
+            <div class="left-panel">
+                <div class="output-section card" style="flex: 1;">
+                    <div class="section-title">Actual output</div>
+                    <textarea id="txt-actual" class="text-area" readonly placeholder="Parsed text will appear here..."></textarea>
+                </div>
+                <div class="output-section card" style="flex: 1;">
+                    <div class="section-title">Expected output</div>
+                    <textarea id="txt-expected" class="text-area" placeholder="Enter expected text here..."></textarea>
+                </div>
+            </div>
+
+            <!-- Middle Panel: PDF Viewer -->
+            <div class="pdf-panel card">
+                <div class="pdf-header">
+                    <span class="pdf-title">PDF viewer</span>
+                    <div class="pdf-nav-btns">
+                        <button id="btn-prev" class="btn btn-secondary btn-nav">&lt; Prev</button>
+                        <button id="btn-next" class="btn btn-secondary btn-nav">Next &gt;</button>
+                    </div>
+                    <div class="pdf-info">
+                        <span id="page-info">Page: 0/0</span>
+                        <span id="doc-type">Doc: None</span>
+                    </div>
+                </div>
+                <div class="pdf-canvas-wrapper">
+                    <div id="pdf-placeholder" class="pdf-placeholder">No PDF loaded</div>
+                    <canvas id="pdf-canvas" style="display: none;"></canvas>
+                </div>
+            </div>
+
+            <!-- Right Panel: Debug Panel (hidden by default) -->
+            <div class="debug-panel card">
+                <div class="section-title">Debug log</div>
+                <textarea id="txt-debug" class="text-area" readonly placeholder="Debug logs will appear here..." style="font-family: monospace;"></textarea>
+            </div>
+        </div>
+
+        <!-- Bottombar Card -->
+        <div id="bottombar" class="card">
+            <div class="bottom-left">
+                <button id="btn-save-txt" class="btn btn-secondary">Save txt.</button>
+                <button id="btn-copy" class="btn btn-secondary">Copy</button>
+            </div>
+            <div class="bottom-right">
+                <span class="version-label">v1.0.0</span>
+                <button id="btn-save-bundle" class="btn btn-primary">Save debug bundle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drag & Drop Overlay -->
+    <div id="drop-overlay">
+        <div class="drop-text">Drop PDF here</div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,524 @@
+/* ====================================
+   MVR / PSP Check — Dark Purple Theme
+   Pixel-perfect match to Figma mockup
+   ==================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-dark: #0D0D14;
+    --bg-app: #161625;
+    --card-bg: #1E1E32;
+    --card-border: #5B4FD6;
+    --card-border-muted: #3A3A5C;
+    --accent: #6C5CE7;
+    --accent-hover: #7E70F0;
+    --accent-active: #5A4BD6;
+    --accent-light: #8B7FEF;
+    --btn-bg: #2E2E4A;
+    --btn-hover: #3E3E5C;
+    --btn-active: #24243C;
+    --text: #F1F5F9;
+    --text-muted: #94A3B8;
+    --content-bg: #FFFFFF;
+    --content-border: #D0D0E0;
+    --sw-on: #6C5CE7;
+    --sw-off: #3A3A5C;
+    --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    --radius-card: 16px;
+    --radius-btn: 24px;
+    --radius-input: 10px;
+    --transition: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-dark);
+    font-family: var(--font);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+}
+
+/* ── App Container ── */
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 16px;
+    gap: 12px;
+    background: linear-gradient(180deg, #1A1A2E 0%, #0F0F1A 100%);
+}
+
+/* ── Card ── */
+.card {
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: var(--radius-card);
+    padding: 16px 20px;
+    position: relative;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: calc(var(--radius-card) + 4px);
+    background: transparent;
+    border: 1px solid rgba(91, 79, 214, 0.15);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Topbar ── */
+#topbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 70px;
+    flex-shrink: 0;
+}
+
+/* ── Buttons ── */
+.btn {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-btn);
+    padding: 10px 22px;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+    outline: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 4px 16px rgba(108, 92, 231, 0.35);
+}
+
+.btn-primary:active {
+    background: var(--accent-active);
+    box-shadow: 0 2px 8px rgba(108, 92, 231, 0.25);
+}
+
+.btn-secondary {
+    background: var(--btn-bg);
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background: var(--btn-hover);
+}
+
+.btn-secondary:active {
+    background: var(--btn-active);
+}
+
+/* Small nav buttons (Prev/Next) */
+.btn-nav {
+    font-size: 12px;
+    padding: 7px 16px;
+    border-radius: 20px;
+}
+
+/* ── Zoom Section ── */
+.zoom-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
+}
+
+.zoom-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.zoom-value {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 700;
+    min-width: 42px;
+}
+
+/* ── Range Slider ── */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 180px;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--card-border-muted);
+    outline: none;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid var(--card-border-muted);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: box-shadow var(--transition);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 2px 10px rgba(108, 92, 231, 0.5);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid var(--card-border-muted);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+/* Filled track effect via linear-gradient (set dynamically via JS) */
+input[type="range"].styled-range {
+    background: linear-gradient(to right, var(--accent) 0%, var(--accent) 50%, var(--card-border-muted) 50%, var(--card-border-muted) 100%);
+}
+
+/* ── Toggle Section ── */
+.toggles-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+.toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle-label {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+}
+
+/* CSS Toggle Switch */
+.toggle-switch {
+    position: relative;
+    width: 48px;
+    height: 26px;
+    cursor: pointer;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--sw-off);
+    border-radius: 26px;
+    transition: background var(--transition);
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    top: 3px;
+    left: 3px;
+    transition: transform var(--transition);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: var(--sw-on);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(22px);
+}
+
+/* ── Main Content Area ── */
+#main-content {
+    display: grid;
+    grid-template-columns: 4fr 5fr;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+#main-content.with-debug {
+    grid-template-columns: 3fr 4fr 3fr;
+}
+
+/* ── Left Panel (Actual + Expected) ── */
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.output-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.text-area {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    background: var(--content-bg);
+    color: #1A1A2E;
+    border: 1px solid var(--content-border);
+    border-radius: var(--radius-input);
+    padding: 12px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    resize: none;
+    outline: none;
+    transition: border-color var(--transition);
+}
+
+.text-area:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+}
+
+.text-area[readonly] {
+    background: #F5F5FA;
+    cursor: default;
+}
+
+/* ── Right Panel (PDF Viewer) ── */
+.pdf-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.pdf-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.pdf-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.pdf-nav-btns {
+    display: flex;
+    gap: 6px;
+}
+
+.pdf-info {
+    display: flex;
+    gap: 16px;
+    margin-left: auto;
+}
+
+.pdf-info span {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.pdf-canvas-wrapper {
+    flex: 1;
+    min-height: 0;
+    background: var(--content-bg);
+    border: 1px solid var(--content-border);
+    border-radius: var(--radius-input);
+    overflow: auto;
+    position: relative;
+}
+
+.pdf-canvas-wrapper canvas {
+    display: block;
+}
+
+.pdf-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* ── Debug Panel ── */
+.debug-panel {
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.debug-panel.visible {
+    display: flex;
+}
+
+/* ── Bottom Bar ── */
+#bottombar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    flex-shrink: 0;
+}
+
+.bottom-left {
+    display: flex;
+    gap: 10px;
+}
+
+.bottom-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.version-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* ── Drag & Drop Overlay ── */
+#drop-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(108, 92, 231, 0.15);
+    border: 3px dashed var(--accent);
+    border-radius: 16px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+#drop-overlay.active {
+    display: flex;
+}
+
+#drop-overlay .drop-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--card-bg);
+    padding: 20px 40px;
+    border-radius: 16px;
+    border: 2px solid var(--accent);
+}
+
+/* ── Scrollbar Styling ── */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--card-border-muted);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* ── Loading / Spinner ── */
+.spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Button Click Ripple ── */
+.btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: inherit;
+}
+
+.btn:active::after {
+    opacity: 1;
+    transition: opacity 0s;
+}
+
+/* ── Topbar Right Section ── */
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
