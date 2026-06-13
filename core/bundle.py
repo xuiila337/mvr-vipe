@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from .types import PdfText, ParseResult
 
 
-APP_VERSION = "beta 1.0"
+APP_VERSION = "beta 1.2"
 DEBUG_SCHEMA_VERSION = 2
 
 

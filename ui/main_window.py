@@ -19,7 +19,7 @@ def run_ui(engine: Engine) -> None:
     html_path = os.path.join(base_dir, 'ui', 'web', 'index.html')
     
     window = webview.create_window(
-        "MVR / PSP Check — beta 1.0",
+        "MVR / PSP Check — beta 1.2",
         url=html_path,
         js_api=api,
         width=1420,

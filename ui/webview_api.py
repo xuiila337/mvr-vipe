@@ -16,6 +16,7 @@ class Api:
     def __init__(self, engine: Engine):
         self.engine = engine
         self.pdf_path = ""
+        self.original_filename = ""
         self.pdf_text: Optional[PdfText] = None
         self.result: Optional[ParseResult] = None
         self.page_count = 0
@@ -37,16 +38,34 @@ class Api:
         
         return self._process_pdf(paths[0])
     
-    def process_dropped_file(self, path: str) -> dict:
-        """Обработка Drag & Drop файла."""
-        if not path.lower().endswith('.pdf'):
-            return {"ok": False, "error": "Not a PDF file"}
-        return self._process_pdf(path)
+    def process_dropped_pdf_bytes(self, base64_data: str, filename: str) -> dict:
+        """Декодирует PDF из base64, сохраняет во временный файл и парсит."""
+        try:
+            import base64
+            import tempfile
+            
+            pdf_bytes = base64.b64decode(base64_data)
+            
+            # Создаем временный файл с оригинальным расширением .pdf
+            fd, temp_path = tempfile.mkstemp(suffix=".pdf", prefix="dropped_")
+            try:
+                with os.fdopen(fd, 'wb') as tmp:
+                    tmp.write(pdf_bytes)
+            except Exception as e:
+                return {"ok": False, "error": f"Failed to write temp file: {e}"}
+            
+            self.original_filename = filename
+            
+            # Обрабатываем
+            return self._process_pdf(temp_path)
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
     
     def _process_pdf(self, path: str) -> dict:
         try:
             pdf_text, result = self.engine.run(path)
             self.pdf_path = path
+            self.original_filename = os.path.basename(path)
             self.pdf_text = pdf_text
             self.result = result
             
@@ -120,7 +139,7 @@ class Api:
             return {"ok": False, "error": "Load a PDF first"}
         
         import webview
-        pdf_base = os.path.splitext(os.path.basename(self.pdf_path))[0]
+        pdf_base = os.path.splitext(self.original_filename)[0] if self.original_filename else "dropped_file"
         stamp = datetime.now().strftime("%Y-%m-%d__%H%M")
         doc = self.result.doc_type
         default_name = f"{doc}__{pdf_base}__{stamp}.zip"

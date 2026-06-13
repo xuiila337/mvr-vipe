@@ -10,7 +10,7 @@ import tempfile
 import urllib.request
 from typing import Optional, Dict, Any
 
-CURRENT_VERSION = "1.0.0"
+CURRENT_VERSION = "1.2.0"
 GITHUB_REPO = "xuiila337/mvr-vipe"
 
 

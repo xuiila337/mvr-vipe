@@ -12,7 +12,7 @@ let highlightsList = [];
 let zoomDebounceTimeout = null;
 
 // Elements
-let btnChoosePdf, zoomSlider, zoomValue, toggleHighlights, toggleDebug, btnCheckUpdate;
+let btnChoosePdf, zoomSlider, zoomValue, toggleHighlights, toggleDebug, toggleTheme, btnCheckUpdate;
 let txtActual, txtExpected, txtDebug, mainContent, dropOverlay;
 let btnPrev, btnNext, pageInfo, docType, pdfCanvas, pdfPlaceholder;
 let btnSaveTxt, btnCopy, btnSaveBundle;
@@ -28,6 +28,7 @@ function init() {
     zoomValue = document.getElementById('zoom-value');
     toggleHighlights = document.getElementById('toggle-highlights');
     toggleDebug = document.getElementById('toggle-debug');
+    toggleTheme = document.getElementById('toggle-theme');
     btnCheckUpdate = document.getElementById('btn-check-update');
     
     txtActual = document.getElementById('txt-actual');
@@ -58,6 +59,7 @@ function init() {
     
     toggleHighlights.addEventListener('change', onToggleHighlights);
     toggleDebug.addEventListener('change', onToggleDebug);
+    toggleTheme.addEventListener('change', onToggleTheme);
     
     zoomSlider.addEventListener('input', onZoomSliderInput);
     
@@ -185,6 +187,14 @@ function onToggleDebug(e) {
     }
     if (pdfLoaded) {
         renderPage();
+    }
+}
+
+function onToggleTheme(e) {
+    if (e.target.checked) {
+        document.body.classList.remove('light-theme');
+    } else {
+        document.body.classList.add('light-theme');
     }
 }
 
@@ -329,30 +339,44 @@ function setupDragAndDrop() {
         const files = e.dataTransfer.files;
         if (files && files.length > 0) {
             const file = files[0];
-            const path = file.path;
             
-            if (!path) {
-                alert("Could not retrieve file path. Please use the 'Choose PDF' button.");
-                return;
-            }
-            
-            if (!path.toLowerCase().endsWith('.pdf')) {
+            if (!file.name.toLowerCase().endsWith('.pdf')) {
                 alert("Please drop a PDF file.");
                 return;
             }
             
-            try {
-                const res = await window.pywebview.api.process_dropped_file(path);
-                if (res && res.ok) {
-                    processPdfResult(res);
-                } else if (res && res.error) {
-                    alert("Error loading dropped PDF: " + res.error);
+            const reader = new FileReader();
+            reader.onload = async function(evt) {
+                try {
+                    const arrayBuffer = evt.target.result;
+                    const base64 = arrayBufferToBase64(arrayBuffer);
+                    
+                    const res = await window.pywebview.api.process_dropped_pdf_bytes(base64, file.name);
+                    if (res && res.ok) {
+                        processPdfResult(res);
+                    } else if (res && res.error) {
+                        alert("Error loading dropped PDF: " + res.error);
+                    }
+                } catch (err) {
+                    alert("Error processing dropped file: " + err);
                 }
-            } catch (err) {
-                alert("Error processing dropped file: " + err);
-            }
+            };
+            reader.onerror = function() {
+                alert("Failed to read the dropped file.");
+            };
+            reader.readAsArrayBuffer(file);
         }
     }, false);
+}
+
+function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
 }
 
 // Polyfill for endsWith if needed

@@ -38,6 +38,26 @@
     --transition: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+body.light-theme {
+    --bg-dark: #F8FAFC;
+    --bg-app: #F1F5F9;
+    --card-bg: #FFFFFF;
+    --card-border: #6C5CE7;
+    --card-border-muted: #E2E8F0;
+    --accent: #5B4FD6;
+    --accent-hover: #4A3EBE;
+    --accent-active: #3E32A0;
+    --btn-bg: #E2E8F0;
+    --btn-hover: #CBD5E1;
+    --btn-active: #94A3B8;
+    --text: #0F172A;
+    --text-muted: #475569;
+    --content-bg: #FFFFFF;
+    --content-border: #CBD5E1;
+    --sw-on: #5B4FD6;
+    --sw-off: #CBD5E1;
+}
+
 html, body {
     width: 100%;
     height: 100%;
