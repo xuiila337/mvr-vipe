@@ -9,8 +9,7 @@ a = Analysis(
     hiddenimports=['webview', 'bottle', 'clr_loader', 'pythonnet'],
     hookspath=[],
     hooksconfig={},
-    runtime_hooks=[],
-    excludes=['PyQt5', 'PySide6', 'PyQt6', 'PySide2', 'matplotlib', 'scipy', 'numpy', 'IPython', 'pygame'],
+    excludes=['PyQt5', 'PySide6', 'PyQt6', 'PySide2', 'matplotlib', 'scipy', 'numpy', 'IPython', 'pygame', 'pkg_resources', 'setuptools'],
     noarchive=False,
     optimize=0,
 )
